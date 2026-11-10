@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Сундук Благодарностей Элли</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-deep: #0f1026;
+            --bg-chest: #1c1836;
+            --gold: #f3d57e;
+            --gold-light: #fff3c4;
+            --gold-dark: #c5a044;
+            --text-main: #f4f1ea;
+            --text-muted: #b8b3cc;
+            --accent-purple: #32285c;
+            --card-bg: rgba(35, 29, 66, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(121, 93, 178, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(243, 213, 126, 0.1) 0%, transparent 40%);
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            padding-bottom: 90px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(243, 213, 126, 0.2);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(243, 213, 126, 0.3);
+            color: var(--gold);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* Canvas Chest Area */
+        .chest-stage {
+            width: 100%;
+            height: 280px;
+            background: radial-gradient(circle, rgba(45, 37, 84, 0.8) 0%, rgba(20, 18, 41, 0.95) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(243, 213, 126, 0.3);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 8px 25px rgba(0,0,0,0.4);
+            cursor: pointer;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .stage-hint {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            pointer-events: none;
+            letter-spacing: 0.5px;
+        }
+
+        /* Daily Progress Tracker */
+        .daily-tracker {
+            background: var(--card-bg);
+            border: 1px solid rgba(243, 213, 126, 0.2);
+            border-radius: 16px;
+            padding: 15px;
+            margin-top: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .tracker-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gold-light);
+        }
+
+        .tracker-count {
+            font-size: 0.85rem;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .spheres-progress {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .progress-dot {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px dashed rgba(243, 213, 126, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .progress-dot.filled {
+            border: 2px solid var(--gold);
+            background: radial-gradient(circle at 30% 30%, var(--gold-light), var(--gold-dark));
+            box-shadow: 0 0 12px var(--gold);
+        }
+
+        /* Action Buttons */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--gold-dark), #9a7625);
+            color: #111;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(197, 160, 68, 0.3);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 8px rgba(197, 160, 68, 0.2);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--gold);
+            border: 1px solid rgba(243, 213, 126, 0.4);
+            box-shadow: none;
+        }
+
+        .btn-full {
+            grid-column: span 2;
+        }
+
+        /* Tabs Navigation */
+        .nav-tabs {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 16, 38, 0.95);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(243, 213, 126, 0.2);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+        }
+
+        .nav-tab {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-tab.active {
+            color: var(--gold);
+        }
+
+        .nav-tab span.icon {
+            font-size: 1.2rem;
+        }
+
+        /* Views */
+        .view {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modals & Dialogs */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 25, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #1b1736;
+            border: 1px solid var(--gold);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            color: var(--gold);
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: rgba(15, 16, 38, 0.8);
+            border: 1px solid rgba(243, 213, 126, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: var(--gold);
+        }
+
+        .color-picker {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .color-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+
+        .color-dot.selected {
+            border-color: #fff;
+            transform: scale(1.15);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+
+        /* Card Styles for Content */
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(243, 213, 126, 0.2);
+            border-radius: 16px;
+            padding: 18px;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .content-card h3 {
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .content-card p {
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .content-card ul {
+            padding-left: 20px;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Settings Toggle switch */
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid rgba(243, 213, 126, 0.2);
+            padding: 16px;
+            border-radius: 16px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #2c2552;
+            transition: .3s;
+            border-radius: 28px;
+            border: 1px solid rgba(243, 213, 126, 0.3);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--text-muted);
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--gold-dark);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+            background-color: var(--gold-light);
+        }
+
+        .time-select {
+            background: rgba(15, 16, 38, 0.8);
+            border: 1px solid rgba(243, 213, 126, 0.3);
+            color: var(--gold);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header>
+            <h1>Сундук Элли</h1>
+            <div class="header-controls">
+                <button class="icon-btn" id="soundToggleBtn" title="Звук хрусталя">🔊</button>
+            </div>
+        </header>
+
+        <!-- VIEW 1: CHEST / MAIN -->
+        <div id="view-chest" class="view active">
+            <!-- Canvas stage -->
+            <div class="chest-stage" id="chestStage" title="Нажмите, чтобы заглянуть в сундук">
+                <canvas id="chestCanvas"></canvas>
+                <div class="stage-hint">✨ Нажмите на шарик, чтобы вспомнить благодарность</div>
+            </div>
+
+            <!-- Daily Tracker -->
+            <div class="daily-tracker">
+                <div class="tracker-header">
+                    <span class="tracker-title">Вечерняя практика (3 шарика)</span>
+                    <span class="tracker-count" id="dailyCounter">0 / 3</span>
+                </div>
+                <div class="spheres-progress">
+                    <div class="progress-dot" id="dot-0">1</div>
+                    <div class="progress-dot" id="dot-1">2</div>
+                    <div class="progress-dot" id="dot-2">3</div>
+                </div>
+            </div>
+
+            <!-- Actions Grid -->
+            <div class="actions-grid">
+                <button class="btn" id="openAddModalBtn">
+                    <span>✨</span> Добавить шарик
+                </button>
+                <button class="btn btn-secondary" id="openStoryBtn">
+                    <span>📖</span> История Элли
+                </button>
+                <button class="btn btn-secondary btn-full" id="openMeditationBtn">
+                    <span>🧘‍♀️</span> Практика медитации
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 2: LIBRARY / PRACTICES -->
+        <div id="view-practices" class="view">
+            <div class="content-card">
+                <h3>📖 Сказка об Элли и Сундуке</h3>
+                <p>На рассвете Элли услышала мягкий хрустальный звон. В углу комнаты стоял старинный резной сундук со звёздами и листьями[cite: 1].</p>
+                <p>«Этот сундук — для благодарностей. Только те, кто умеют замечать хорошее, могут открывать его»[cite: 1].</p>
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" id="readFullStoryBtn">Читать сказку полностью</button>
+            </div>
+
+            <div class="content-card">
+                <h3>🧘‍♂️ Практика для детей (6-15 лет)</h3>
+                <p>3 вопроса для вечернего волшебства:</p>
+                <ul>
+                    <li>🌞 За что я благодарен прямо СЕЙЧАС?</li>
+                    <li>🏠 Что хорошего есть в моём доме?</li>
+                    <li>💛 Кто рядом со мной приносит радость?</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>🧠 Практика для взрослых (7 слоев)</h3>
+                <p>Глубокая инвентаризация благодати: тело, пространство, люди, возможности, трудности, обычное и благодарность себе[cite: 1].</p>
+            </div>
+        </div>
+
+        <!-- VIEW 3: SETTINGS & REMINDERS -->
+        <div id="view-settings" class="view">
+            <div class="setting-item">
+                <div>
+                    <strong>🔔 Ежедневное напоминание</strong>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Вечерний хрустальный звон сундука</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="reminderToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-item" id="timeSettingBox" style="opacity: 0.5; pointer-events: none;">
+                <div>
+                    <strong>⏰ Время напоминания</strong>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Когда позвать вас положить шарики</div>
+                </div>
+                <input type="time" class="time-select" id="reminderTime" value="21:00">
+            </div>
+
+            <div class="content-card">
+                <h3>💡 О проекте</h3>
+                <p>Сундук Благодарностей создан по мотивам истории Элли. Регулярная практика благодарности тренирует мозг замечать светлые стороны жизни и повышает уровень счастья[cite: 1].</p>
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 10px; color: #ff6b6b; border-color: rgba(255,107,107,0.3);" id="resetDataBtn">Сбросить все шарики</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-target="view-chest">
+            <span class="icon">🎁</span>
+            <span>Сундук</span>
+        </button>
+        <button class="nav-tab" data-target="view-practices">
+            <span class="icon">📜</span>
+            <span>Практики</span>
+        </button>
+        <button class="nav-tab" data-target="view-settings">
+            <span class="icon">⚙️</span>
+            <span>Настройки</span>
+        </button>
+    </nav>
+
+    <!-- MODAL: ADD SPHERE -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal-card">
+            <div class="modal-title">Новый шарик благодарности</div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); text-align: center;">За что вы хотите сказать «спасибо» в этот день?</p>
+            <textarea id="gratitudeText" placeholder="Например: Тёплый утренний кофе, улыбка друга или уютный плед..."></textarea>
+            
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Выберите цвет сияния:</div>
+            <div class="color-picker" id="colorPicker">
+                <div class="color-dot selected" style="background: #ffd700;" data-color="#ffd700"></div>
+                <div class="color-dot" style="background: #ff758c;" data-color="#ff758c"></div>
+                <div class="color-dot" style="background: #75ffd9;" data-color="#75ffd9"></div>
+                <div class="color-dot" style="background: #b175ff;" data-color="#b175ff"></div>
+                <div class="color-dot" style="background: #75b3ff;" data-color="#75b3ff"></div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="closeAddModal">Отмена</button>
+                <button class="btn" id="saveGratitudeBtn">Положить в сундук</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: VIEW SPHERE DETAIL -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-card">
+            <div class="modal-title" id="detailTitle">Воспоминание ✨</div>
+            <p id="detailText" style="text-align: center; font-size: 1.05rem; padding: 10px 0; color: #fff;"></p>
+            <div id="detailDate" style="text-align: center; font-size: 0.75rem; color: var(--text-muted);"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="closeDetailModal">Закрыть</button>
+                <button class="btn" id="deleteSphereBtn" style="background: #8b3a3a; color: #fff;">Удалить шарик</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: STORY / MEDITATION READER -->
+    <div class="modal-overlay" id="readerModal">
+        <div class="modal-card" style="max-height: 80vh; overflow-y: auto;">
+            <div class="modal-title" id="readerTitle">История Элли</div>
+            <div id="readerContent" style="font-size: 0.9rem; line-height: 1.6; color: var(--text-muted);"></div>
+            <button class="btn" id="closeReaderModal">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        // --- TELEGRAM WEB APP INIT ---
+        let tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+            try { tg.ready(); } catch(e){}
+        }
+
+        // --- AUDIO ENGINE (Crystal Chime Web Audio API) ---
+        let soundEnabled = true;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playCrystalChime() {
+            if (!soundEnabled) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime); // C6 note
+            osc.frequency.exponentialRampToValueAtTime(2093.00, audioCtx.currentTime + 0.8);
+
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 1.2);
+
+            if (tg && tg.HapticFeedback) {
+                try { tg.HapticFeedback.notificationOccurred('success'); } catch(e){}
+            }
+        }
+
+        // --- APP STATE & STORAGE ---
+        let spheres = JSON.parse(localStorage.getItem('ellie_spheres') || '[]');
+        let reminderSettings = JSON.parse(localStorage.getItem('ellie_reminder') || '{"enabled":false,"time":"21:00"}');
+        let selectedColor = '#ffd700';
+        let activeSphereIndex = null;
+
+        // Default initial items if empty
+        if (spheres.length === 0) {
+            spheres = [
+                { text: "Мама укрыла тёплым пледом ранним утром", color: "#ffd700", date: "Сегодня" },
+                { text: "Вкусный горячий чай с яблочным пирогом", color: "#ff758c", date: "Сегодня" },
+                { text: "Красивые лучи солнца сквозь тюль", color: "#75ffd9", date: "Сегодня" }
+            ];
+            saveSpheres();
+        }
+
+        function saveSpheres() {
+            localStorage.setItem('ellie_spheres', JSON.stringify(spheres));
+            updateDailyCounter();
+        }
+
+        // --- CANVAS PHYSICS & ANIMATION ---
+        const canvas = document.getElementById('chestCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(sphereData, index) {
+                this.data = sphereData;
+                this.index = index;
+                this.radius = 16;
+                this.x = Math.random() * (canvas.width / window.devicePixelRatio - 60) + 30;
+                this.y = Math.random() * (canvas.height / window.devicePixelRatio - 80) + 40;
+                this.vx = (Math.random() - 0.5) * 0.6;
+                this.vy = (Math.random() - 0.5) * 0.6;
+                this.color = sphereData.color || '#ffd700';
+                this.pulse = Math.random() * Math.PI;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                const w = canvas.width / window.devicePixelRatio;
+                const h = canvas.height / window.devicePixelRatio;
+
+                if (this.x < 25 || this.x > w - 25) this.vx *= -1;
+                if (this.y < 25 || this.y > h - 25) this.vy *= -1;
+
+                this.pulse += 0.03;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                const currentRadius = this.radius + Math.sin(this.pulse) * 2;
+                
+                // Glow
+                let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, currentRadius * 2);
+                gradient.addColorStop(0, this.color);
+                gradient.addColorStop(0.5, this.color + '66');
+                gradient.addColorStop(1, 'transparent');
+                
+                ctx.fillStyle = gradient;
+                ctx.arc(this.x, this.y, currentRadius * 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Core
+                ctx.beginPath();
+                let coreGradient = ctx.createRadialGradient(this.x - 4, this.y - 4, 2, this.x, this.y, currentRadius);
+                coreGradient.addColorStop(0, '#ffffff');
+                coreGradient.addColorStop(0.4, this.color);
+                coreGradient.addColorStop(1, '#111');
+                
+                ctx.fillStyle = coreGradient;
+                ctx.arc(this.x, this.y, currentRadius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function initParticles() {
+            particles = spheres.map((s, i) => new Particle(s, i));
+        }
+        initParticles();
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw chest bottom aesthetic
+            const w = canvas.width / window.devicePixelRatio;
+            const h = canvas.height / window.devicePixelRatio;
+            
+            ctx.fillStyle = 'rgba(28, 24, 54, 0.6)';
+            ctx.fillRect(0, h - 35, w, 35);
+            ctx.fillStyle = 'rgba(243, 213, 126, 0.15)';
+            ctx.fillRect(0, h - 38, w, 3);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- INTERACTION ON CANVAS ---
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // Check if clicked near any particle
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                const dist = Math.hypot(p.x - mouseX, p.y - mouseY);
+                if (dist < p.radius + 10) {
+                    openDetailModal(p.index);
+                    playCrystalChime();
+                    break;
+                }
+            }
+        });
+
+        // --- DAILY PROGRESS CHECKER ---
+        function updateDailyCounter() {
+            const todayStr = new Date().toLocaleDateString();
+            const todaySpheres = spheres.filter(s => s.date === todayStr || s.date === 'Сегодня');
+            const count = Math.min(todaySpheres.length, 3);
+
+            document.getElementById('dailyCounter').textContent = `${count} / 3`;
+            for (let i = 0; i < 3; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i < count) {
+                    dot.classList.add('filled');
+                    dot.textContent = '✓';
+                } else {
+                    dot.classList.remove('filled');
+                    dot.textContent = i + 1;
+                }
+            }
+        }
+        updateDailyCounter();
+
+        // --- UI NAVIGATION TABS ---
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+
+                tab.classList.add('active');
+                const target = tab.getAttribute('data-target');
+                document.getElementById(target).classList.add('active');
+            });
+        });
+
+        // --- MODAL CONTROLS ---
+        const addModal = document.getElementById('addModal');
+        const detailModal = document.getElementById('detailModal');
+        const readerModal = document.getElementById('readerModal');
+
+        document.getElementById('openAddModalBtn').addEventListener('click', () => {
+            document.getElementById('gratitudeText').value = '';
+            addModal.classList.add('active');
+        });
+
+        document.getElementById('closeAddModal').addEventListener('click', () => {
+            addModal.classList.remove('active');
+        });
+
+        // Color picker selection
+        document.querySelectorAll('.color-dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+                dot.classList.add('selected');
+                selectedColor = dot.getAttribute('data-color');
+            });
+        });
+
+        // Save new gratitude sphere
+        document.getElementById('saveGratitudeBtn').addEventListener('click', () => {
+            const text = document.getElementById('gratitudeText').value.trim();
+            if (!text) return;
+
+            const newSphere = {
+                text: text,
+                color: selectedColor,
+                date: new Date().toLocaleDateString()
+            };
+
+            spheres.push(newSphere);
+            saveSpheres();
+            initParticles();
+            playCrystalChime();
+            addModal.classList.remove('active');
+        });
+
+        // Detail Modal
+        function openDetailModal(index) {
+            activeSphereIndex = index;
+            const s = spheres[index];
+            document.getElementById('detailText').textContent = `«${s.text}»`;
+            document.getElementById('detailDate').textContent = `Добавлено: ${s.date || 'Недавно'}`;
+            detailModal.classList.add('active');
+        }
+
+        document.getElementById('closeDetailModal').addEventListener('click', () => {
+            detailModal.classList.remove('active');
+        });
+
+        document.getElementById('deleteSphereBtn').addEventListener('click', () => {
+            if (activeSphereIndex !== null) {
+                spheres.splice(activeSphereIndex, 1);
+                saveSpheres();
+                initParticles();
+                detailModal.classList.remove('active');
+            }
+        });
+
+        // Sound Toggle
+        const soundBtn = document.getElementById('soundToggleBtn');
+        soundBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+        });
+
+        // Reader Modal Content
+        document.getElementById('openStoryBtn').addEventListener('click', () => {
+            document.getElementById('readerTitle').textContent = 'История Элли и Сундук';
+            document.getElementById('readerContent').innerHTML = `
+                <p>На рассвете Элли услышала мягкий звон. В углу комнаты стоял старинный сундук со звёздами и листьями, источающий золотистое свечение[cite: 1].</p>
+                <p>— Этот сундук — для благодарностей. Только те, кто умеют замечать хорошее, могут открывать его, — прошептал нежный голос[cite: 1].</p>
+                <p>Внутри плавали светящиеся шарики. Дотронувшись до каждого, Элли вспоминала мамин плед, объятия друга и теплоту каждого мгновения. С тех пор сундук стал её верным другом[cite: 1].</p>
+            `;
+            readerModal.classList.add('active');
+        });
+
+        document.getElementById('readFullStoryBtn').addEventListener('click', () => {
+            document.getElementById('readerTitle').textContent = 'Сказка об Элли (Полная версия)';
+            document.getElementById('readerContent').innerHTML = `
+                <p>В самых древних сказках говорится, что настоящее волшебство приходит к тем, кто умеет видеть чудеса в обычных днях!</p>
+                <p>Элли открыла крышку сундука и ахнула от восхищения. Внутри кружились светящиеся сферы. Каждый шарик — это искренняя благодарность[cite: 1]. Чем больше благодарностей собирала Элли, тем ярче сиял её внутренний свет[cite: 1].</p>
+            `;
+            readerModal.classList.add('active');
+        });
+
+        document.getElementById('openMeditationBtn').addEventListener('click', () => {
+            document.getElementById('readerTitle').textContent = 'Медитация Благодарности';
+            document.getElementById('readerContent').innerHTML = `
+                <p><strong>1. Дыхание Благодарности:</strong> Вдох (4 счёта) — золотистый свет. Задержка (2 счёта) — оседает в сердце. Выдох (6 счётов) — уходит вся тревога.</p>
+                <p><strong>2. Три Вопроса:</strong> За что благодарен прямо сейчас? Что хорошего в доме? Кто рядом приносит радость?</p>
+                <p><strong>3. Вечерний ритуал:</strong> Перед сном всегда кладите 3 новых шарика в сундук[cite: 1].</p>
+            `;
+            readerModal.classList.add('active');
+        });
+
+        document.getElementById('closeReaderModal').addEventListener('click', () => {
+            readerModal.classList.remove('active');
+        });
+
+        // Reset Data
+        document.getElementById('resetDataBtn').addEventListener('click', () => {
+            if (confirm('Вы уверены, что хотите очистить сундук?')) {
+                spheres = [];
+                saveSpheres();
+                initParticles();
+                alert('Сундук пуст. Начните собирать новые светящиеся шарики!');
+            }
+        });
+
+        // --- REMINDERS LOGIC ---
+        const reminderToggle = document.getElementById('reminderToggle');
+        const timeSettingBox = document.getElementById('timeSettingBox');
+        const reminderTimeInput = document.getElementById('reminderTime');
+
+        // Load settings state
+        reminderToggle.checked = reminderSettings.enabled;
+        reminderTimeInput.value = reminderSettings.time;
+        if (reminderSettings.enabled) {
+            timeSettingBox.style.opacity = '1';
+            timeSettingBox.style.pointerEvents = 'auto';
+        }
+
+        reminderToggle.addEventListener('change', () => {
+            reminderSettings.enabled = reminderToggle.checked;
+            if (reminderSettings.enabled) {
+                timeSettingBox.style.opacity = '1';
+                timeSettingBox.style.pointerEvents = 'auto';
+                if (Notification && Notification.permission !== 'granted') {
+                    Notification.requestPermission();
+                }
+                alert('Напоминания включены! Каждый вечер в ' + reminderSettings.time + ' сундук позовет вас на практику.');
+            } else {
+                timeSettingBox.style.opacity = '0.5';
+                timeSettingBox.style.pointerEvents = 'none';
+                alert('Напоминания отключены.');
+            }
+            localStorage.setItem('ellie_reminder', JSON.stringify(reminderSettings));
+        });
+
+        reminderTimeInput.addEventListener('change', () => {
+            reminderSettings.time = reminderTimeInput.value;
+            localStorage.setItem('ellie_reminder', JSON.stringify(reminderSettings));
+        });
+    </script>
+</body>
+</html>
