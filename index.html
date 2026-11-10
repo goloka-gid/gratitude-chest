@@ -455,6 +455,7 @@
             border-radius: 10px;
             font-size: 0.9rem;
             outline: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -508,8 +509,8 @@
         <div id="view-practices" class="view">
             <div class="content-card">
                 <h3>📖 Сказка об Элли и Сундуке</h3>
-                <p>На рассвете Элли услышала мягкий хрустальный звон. В углу комнаты стоял старинный резной сундук со звёздами и листьями[cite: 1].</p>
-                <p>«Этот сундук — для благодарностей. Только те, кто умеют замечать хорошее, могут открывать его»[cite: 1].</p>
+                <p>На рассвете Элли услышала мягкий хрустальный звон. В углу комнаты стоял старинный резной сундук со звёздами и листьями, источающий золотистое свечение.</p>
+                <p>«Этот сундук — для благодарностей. Только те, кто умеют замечать хорошее, могут открывать его».</p>
                 <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" id="readFullStoryBtn">Читать сказку полностью</button>
             </div>
 
@@ -525,7 +526,7 @@
 
             <div class="content-card">
                 <h3>🧠 Практика для взрослых (7 слоев)</h3>
-                <p>Глубокая инвентаризация благодати: тело, пространство, люди, возможности, трудности, обычное и благодарность себе[cite: 1].</p>
+                <p>Глубокая инвентаризация благодати: тело, пространство, люди, возможности, трудности, обычное и благодарность себе.</p>
             </div>
         </div>
 
@@ -542,17 +543,17 @@
                 </label>
             </div>
 
-            <div class="setting-item" id="timeSettingBox" style="opacity: 0.5; pointer-events: none;">
+            <div class="setting-item">
                 <div>
                     <strong>⏰ Время напоминания</strong>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Когда позвать вас положить шарики</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Выберите удобное время (например, 20:00 или 19:35)</div>
                 </div>
                 <input type="time" class="time-select" id="reminderTime" value="21:00">
             </div>
 
             <div class="content-card">
                 <h3>💡 О проекте</h3>
-                <p>Сундук Благодарностей создан по мотивам истории Элли. Регулярная практика благодарности тренирует мозг замечать светлые стороны жизни и повышает уровень счастья[cite: 1].</p>
+                <p>Сундук Благодарностей создан по мотивам истории Элли. Регулярная практика благодарности тренирует мозг замечать светлые стороны жизни и повышает уровень счастья.</p>
                 <button class="btn btn-secondary" style="width: 100%; margin-top: 10px; color: #ff6b6b; border-color: rgba(255,107,107,0.3);" id="resetDataBtn">Сбросить все шарики</button>
             </div>
         </div>
@@ -895,9 +896,9 @@
         document.getElementById('openStoryBtn').addEventListener('click', () => {
             document.getElementById('readerTitle').textContent = 'История Элли и Сундук';
             document.getElementById('readerContent').innerHTML = `
-                <p>На рассвете Элли услышала мягкий звон. В углу комнаты стоял старинный сундук со звёздами и листьями, источающий золотистое свечение[cite: 1].</p>
-                <p>— Этот сундук — для благодарностей. Только те, кто умеют замечать хорошее, могут открывать его, — прошептал нежный голос[cite: 1].</p>
-                <p>Внутри плавали светящиеся шарики. Дотронувшись до каждого, Элли вспоминала мамин плед, объятия друга и теплоту каждого мгновения. С тех пор сундук стал её верным другом[cite: 1].</p>
+                <p>На рассвете Элли услышала мягкий звон. В углу комнаты стоял старинный сундук со звёздами и листьями, источающий золотистое свечение.</p>
+                <p>— Этот сундук — для благодарностей. Только те, кто умеют замечать хорошее, могут открывать его, — прошептал нежный голос.</p>
+                <p>Внутри плавали светящиеся шарики. Дотронувшись до каждого, Элли вспоминала мамин плед, объятия друга и теплоту каждого мгновения. С тех пор сундук стал её верным другом.</p>
             `;
             readerModal.classList.add('active');
         });
@@ -906,7 +907,7 @@
             document.getElementById('readerTitle').textContent = 'Сказка об Элли (Полная версия)';
             document.getElementById('readerContent').innerHTML = `
                 <p>В самых древних сказках говорится, что настоящее волшебство приходит к тем, кто умеет видеть чудеса в обычных днях!</p>
-                <p>Элли открыла крышку сундука и ахнула от восхищения. Внутри кружились светящиеся сферы. Каждый шарик — это искренняя благодарность[cite: 1]. Чем больше благодарностей собирала Элли, тем ярче сиял её внутренний свет[cite: 1].</p>
+                <p>Элли открыла крышку сундука и ахнула от восхищения. Внутри кружились светящиеся сферы. Каждый шарик — это искренняя благодарность. Чем больше благодарностей собирала Элли, тем ярче сиял её внутренний свет.</p>
             `;
             readerModal.classList.add('active');
         });
@@ -916,7 +917,7 @@
             document.getElementById('readerContent').innerHTML = `
                 <p><strong>1. Дыхание Благодарности:</strong> Вдох (4 счёта) — золотистый свет. Задержка (2 счёта) — оседает в сердце. Выдох (6 счётов) — уходит вся тревога.</p>
                 <p><strong>2. Три Вопроса:</strong> За что благодарен прямо сейчас? Что хорошего в доме? Кто рядом приносит радость?</p>
-                <p><strong>3. Вечерний ритуал:</strong> Перед сном всегда кладите 3 новых шарика в сундук[cite: 1].</p>
+                <p><strong>3. Вечерний ритуал:</strong> Перед сном всегда кладите 3 новых шарика в сундук.</p>
             `;
             readerModal.classList.add('active');
         });
@@ -937,29 +938,20 @@
 
         // --- REMINDERS LOGIC ---
         const reminderToggle = document.getElementById('reminderToggle');
-        const timeSettingBox = document.getElementById('timeSettingBox');
         const reminderTimeInput = document.getElementById('reminderTime');
 
         // Load settings state
         reminderToggle.checked = reminderSettings.enabled;
-        reminderTimeInput.value = reminderSettings.time;
-        if (reminderSettings.enabled) {
-            timeSettingBox.style.opacity = '1';
-            timeSettingBox.style.pointerEvents = 'auto';
-        }
+        reminderTimeInput.value = reminderSettings.time || "21:00";
 
         reminderToggle.addEventListener('change', () => {
             reminderSettings.enabled = reminderToggle.checked;
             if (reminderSettings.enabled) {
-                timeSettingBox.style.opacity = '1';
-                timeSettingBox.style.pointerEvents = 'auto';
                 if (Notification && Notification.permission !== 'granted') {
                     Notification.requestPermission();
                 }
-                alert('Напоминания включены! Каждый вечер в ' + reminderSettings.time + ' сундук позовет вас на практику.');
+                alert('Напоминания включены на ' + reminderSettings.time + '! Сундук позовет вас на вечернюю практику.');
             } else {
-                timeSettingBox.style.opacity = '0.5';
-                timeSettingBox.style.pointerEvents = 'none';
                 alert('Напоминания отключены.');
             }
             localStorage.setItem('ellie_reminder', JSON.stringify(reminderSettings));
