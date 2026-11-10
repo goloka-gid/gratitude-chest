@@ -2,8 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <link rel="apple-touch-icon" href="https://goloka-gid.github.io/gratitude-chest/icon.png">
-    <link rel="icon" type="image/png" href="https://goloka-gid.github.io/gratitude-chest/icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Сундук Благодарностей Элли</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -218,7 +216,7 @@
             grid-column: span 2;
         }
 
-        /* Tabs Navigation */
+        /* Tabs Navigation (2 items now) */
         .nav-tabs {
             position: fixed;
             bottom: 0;
@@ -244,6 +242,7 @@
             gap: 4px;
             cursor: pointer;
             transition: color 0.2s;
+            flex: 1;
         }
 
         .nav-tab.active {
@@ -393,72 +392,6 @@
             flex-direction: column;
             gap: 6px;
         }
-
-        /* Settings Toggle switch */
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            border: 1px solid rgba(243, 213, 126, 0.2);
-            padding: 16px;
-            border-radius: 16px;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 28px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #2c2552;
-            transition: .3s;
-            border-radius: 28px;
-            border: 1px solid rgba(243, 213, 126, 0.3);
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 3px;
-            bottom: 3px;
-            background-color: var(--text-muted);
-            transition: .3s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--gold-dark);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(22px);
-            background-color: var(--gold-light);
-        }
-
-        .time-select {
-            background: rgba(15, 16, 38, 0.8);
-            border: 1px solid rgba(243, 213, 126, 0.3);
-            color: var(--gold);
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            outline: none;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -466,7 +399,7 @@
     <div class="app-container">
         <!-- HEADER -->
         <header>
-            <h1>Сундук Элли</h1>
+            <h1>Сундук Благодарностей</h1>
             <div class="header-controls">
                 <button class="icon-btn" id="soundToggleBtn" title="Звук хрусталя">🔊</button>
             </div>
@@ -530,38 +463,16 @@
                 <h3>🧠 Практика для взрослых (7 слоев)</h3>
                 <p>Глубокая инвентаризация благодати: тело, пространство, люди, возможности, трудности, обычное и благодарность себе.</p>
             </div>
-        </div>
 
-        <!-- VIEW 3: SETTINGS & REMINDERS -->
-        <div id="view-settings" class="view">
-            <div class="setting-item">
-                <div>
-                    <strong>🔔 Ежедневное напоминание</strong>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Вечерний хрустальный звон сундука</div>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="reminderToggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="setting-item">
-                <div>
-                    <strong>⏰ Время напоминания</strong>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Выберите удобное время (например, 20:00 или 19:35)</div>
-                </div>
-                <input type="time" class="time-select" id="reminderTime" value="21:00">
-            </div>
-
-            <div class="content-card">
-                <h3>💡 О проекте</h3>
-                <p>Сундук Благодарностей создан по мотивам истории Элли. Регулярная практика благодарности тренирует мозг замечать светлые стороны жизни и повышает уровень счастья.</p>
-                <button class="btn btn-secondary" style="width: 100%; margin-top: 10px; color: #ff6b6b; border-color: rgba(255,107,107,0.3);" id="resetDataBtn">Сбросить все шарики</button>
+            <div class="content-card" style="border-color: rgba(255,107,107,0.3);">
+                <h3>⚙️ Управление сундуком</h3>
+                <p>Вы можете очистить историю сохраненных шариков, если захотите начать ведение сундука с чистого листа.</p>
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 5px; color: #ff6b6b; border-color: rgba(255,107,107,0.3);" id="resetDataBtn">Сбросить все шарики</button>
             </div>
         </div>
     </div>
 
-    <!-- NAVIGATION TABS -->
+    <!-- NAVIGATION TABS (2 Tabs) -->
     <nav class="nav-tabs">
         <button class="nav-tab active" data-target="view-chest">
             <span class="icon">🎁</span>
@@ -570,10 +481,6 @@
         <button class="nav-tab" data-target="view-practices">
             <span class="icon">📜</span>
             <span>Практики</span>
-        </button>
-        <button class="nav-tab" data-target="view-settings">
-            <span class="icon">⚙️</span>
-            <span>Настройки</span>
         </button>
     </nav>
 
@@ -662,7 +569,6 @@
 
         // --- APP STATE & STORAGE ---
         let spheres = JSON.parse(localStorage.getItem('ellie_spheres') || '[]');
-        let reminderSettings = JSON.parse(localStorage.getItem('ellie_reminder') || '{"enabled":false,"time":"21:00"}');
         let selectedColor = '#ffd700';
         let activeSphereIndex = null;
 
@@ -780,7 +686,6 @@
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
 
-            // Check if clicked near any particle
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];
                 const dist = Math.hypot(p.x - mouseX, p.y - mouseY);
@@ -936,32 +841,6 @@
                 initParticles();
                 alert('Сундук пуст. Начните собирать новые светящиеся шарики!');
             }
-        });
-
-        // --- REMINDERS LOGIC ---
-        const reminderToggle = document.getElementById('reminderToggle');
-        const reminderTimeInput = document.getElementById('reminderTime');
-
-        // Load settings state
-        reminderToggle.checked = reminderSettings.enabled;
-        reminderTimeInput.value = reminderSettings.time || "21:00";
-
-        reminderToggle.addEventListener('change', () => {
-            reminderSettings.enabled = reminderToggle.checked;
-            if (reminderSettings.enabled) {
-                if (Notification && Notification.permission !== 'granted') {
-                    Notification.requestPermission();
-                }
-                alert('Напоминания включены на ' + reminderSettings.time + '! Сундук позовет вас на вечернюю практику.');
-            } else {
-                alert('Напоминания отключены.');
-            }
-            localStorage.setItem('ellie_reminder', JSON.stringify(reminderSettings));
-        });
-
-        reminderTimeInput.addEventListener('change', () => {
-            reminderSettings.time = reminderTimeInput.value;
-            localStorage.setItem('ellie_reminder', JSON.stringify(reminderSettings));
         });
     </script>
 </body>
