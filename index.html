@@ -516,27 +516,6 @@
             try { tg.ready(); } catch(e){}
         }
 
-        // --- OFFLINE SERVICE WORKER REGISTRATION ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'gratitude-chest-v2';
-                    self.addEventListener('install', (e) => { self.skipWaiting(); });
-                    self.addEventListener('activate', (e) => {
-                        e.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))));
-                        self.clients.claim();
-                    });
-                    self.addEventListener('fetch', (e) => {
-                        e.respondWith(
-                            caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./index.html')))
-                        );
-                    });
-                `;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(err => console.log('SW error:', err));
-            });
-        }
-
         // --- AUDIO ENGINE (Crystal Chime Web Audio API) ---
         let soundEnabled = true;
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -798,6 +777,15 @@
                 alert('Сундук пуст. Начните собирать новые светящиеся шарики!');
             }
         });
+
+        // --- REGISTER EXTERNAL SERVICE WORKER ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log('Service Worker успешно зарегистрирован!'))
+                    .catch(err => console.log('Ошибка регистрации SW:', err));
+            });
+        }
     </script>
 </body>
 </html>
