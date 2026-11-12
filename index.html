@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <link rel="apple-touch-icon" href="https://goloka-gid.github.io/gratitude-chest/icon.png">
-    <link rel="icon" type="image/png" href="https://goloka-gid.github.io/gratitude-chest/icon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Сундук Благодарностей Элли</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Сундук Благодарностей</title>
+    <link rel="apple-touch-icon" href="./icon.png">
+    <link rel="icon" type="image/png" href="./icon.png">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -25,7 +24,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -63,7 +62,6 @@
         }
 
         h1 {
-            font-family: 'Playfair Display', serif;
             font-size: 1.3rem;
             color: var(--gold);
             font-weight: 700;
@@ -179,8 +177,8 @@
 
         /* Action Buttons */
         .actions-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 12px;
             margin-top: 15px;
         }
@@ -214,11 +212,7 @@
             box-shadow: none;
         }
 
-        .btn-full {
-            grid-column: span 2;
-        }
-
-        /* Tabs Navigation (2 items now) */
+        /* Tabs Navigation (2 items) */
         .nav-tabs {
             position: fixed;
             bottom: 0;
@@ -312,10 +306,10 @@
         }
 
         .modal-title {
-            font-family: 'Playfair Display', serif;
             font-size: 1.25rem;
             color: var(--gold);
             text-align: center;
+            font-weight: 700;
         }
 
         textarea {
@@ -377,7 +371,6 @@
 
         .content-card h3 {
             color: var(--gold);
-            font-family: 'Playfair Display', serif;
             margin-bottom: 10px;
             font-size: 1.1rem;
         }
@@ -428,16 +421,10 @@
                 </div>
             </div>
 
-            <!-- Actions Grid -->
+            <!-- Action Button -->
             <div class="actions-grid">
                 <button class="btn" id="openAddModalBtn">
                     <span>✨</span> Добавить шарик
-                </button>
-                <button class="btn btn-secondary" id="openStoryBtn">
-                    <span>📖</span> История Элли
-                </button>
-                <button class="btn btn-secondary btn-full" id="openMeditationBtn">
-                    <span>🧘‍♀️</span> Практика медитации
                 </button>
             </div>
         </div>
@@ -445,25 +432,24 @@
         <!-- VIEW 2: LIBRARY / PRACTICES -->
         <div id="view-practices" class="view">
             <div class="content-card">
-                <h3>📖 Сказка об Элли и Сундуке</h3>
-                <p>На рассвете Элли услышала мягкий хрустальный звон. В углу комнаты стоял старинный резной сундук со звёздами и листьями, источающий золотистое свечение.</p>
-                <p>«Этот сундук — для благодарностей. Только те, кто умеют замечать хорошее, могут открывать его».</p>
-                <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" id="readFullStoryBtn">Читать сказку полностью</button>
-            </div>
-
-            <div class="content-card">
                 <h3>🧘‍♂️ Практика для детей (6-15 лет)</h3>
                 <p>3 вопроса для вечернего волшебства:</p>
                 <ul>
                     <li>🌞 За что я благодарен прямо СЕЙЧАС?</li>
-                    <li>🏠 Что хорошего есть в моём доме?</li>
-                    <li>💛 Кто рядом со мной приносит радость?</li>
+                    <li>🏠 Что хорошего было сегодня?</li>
+                    <li>💛 За что я могу сказать "спасибо"?</li>
                 </ul>
             </div>
 
             <div class="content-card">
-                <h3>🧠 Практика для взрослых (7 слоев)</h3>
-                <p>Глубокая инвентаризация благодати: тело, пространство, люди, возможности, трудности, обычное и благодарность себе.</p>
+                <h3>🧠 Практика для взрослых (15+ лет)</h3>
+                <p>За что благодарен своему телу?</p>
+                <p>За что благодарен пространству?</p>
+                <p>Кому благодарен?</p>
+                <p>За какие возможности благодарен?</p>
+                <p>За какую трудность благодарен?</p>
+                <p>За что благодарен из "обычного" сегодняшнего дня?</p>
+                <p>За что благодарен себе?</p>
             </div>
 
             <div class="content-card" style="border-color: rgba(255,107,107,0.3);">
@@ -522,21 +508,33 @@
         </div>
     </div>
 
-    <!-- MODAL: STORY / MEDITATION READER -->
-    <div class="modal-overlay" id="readerModal">
-        <div class="modal-card" style="max-height: 80vh; overflow-y: auto;">
-            <div class="modal-title" id="readerTitle">История Элли</div>
-            <div id="readerContent" style="font-size: 0.9rem; line-height: 1.6; color: var(--text-muted);"></div>
-            <button class="btn" id="closeReaderModal">Закрыть</button>
-        </div>
-    </div>
-
     <script>
         // --- TELEGRAM WEB APP INIT ---
         let tg = window.Telegram?.WebApp;
         if (tg) {
             tg.expand();
             try { tg.ready(); } catch(e){}
+        }
+
+        // --- OFFLINE SERVICE WORKER REGISTRATION ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'gratitude-chest-v2';
+                    self.addEventListener('install', (e) => { self.skipWaiting(); });
+                    self.addEventListener('activate', (e) => {
+                        e.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))));
+                        self.clients.claim();
+                    });
+                    self.addEventListener('fetch', (e) => {
+                        e.respondWith(
+                            caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./index.html')))
+                        );
+                    });
+                `;
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(err => console.log('SW error:', err));
+            });
         }
 
         // --- AUDIO ENGINE (Crystal Chime Web Audio API) ---
@@ -552,7 +550,7 @@
             const gain = audioCtx.createGain();
             
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime); // C6 note
+            osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(2093.00, audioCtx.currentTime + 0.8);
 
             gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
@@ -574,7 +572,6 @@
         let selectedColor = '#ffd700';
         let activeSphereIndex = null;
 
-        // Default initial items if empty
         if (spheres.length === 0) {
             spheres = [
                 { text: "Мама укрыла тёплым пледом ранним утром", color: "#ffd700", date: "Сегодня" },
@@ -633,7 +630,6 @@
                 ctx.beginPath();
                 const currentRadius = this.radius + Math.sin(this.pulse) * 2;
                 
-                // Glow
                 let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, currentRadius * 2);
                 gradient.addColorStop(0, this.color);
                 gradient.addColorStop(0.5, this.color + '66');
@@ -643,7 +639,6 @@
                 ctx.arc(this.x, this.y, currentRadius * 2, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Core
                 ctx.beginPath();
                 let coreGradient = ctx.createRadialGradient(this.x - 4, this.y - 4, 2, this.x, this.y, currentRadius);
                 coreGradient.addColorStop(0, '#ffffff');
@@ -665,7 +660,6 @@
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Draw chest bottom aesthetic
             const w = canvas.width / window.devicePixelRatio;
             const h = canvas.height / window.devicePixelRatio;
             
@@ -734,7 +728,6 @@
         // --- MODAL CONTROLS ---
         const addModal = document.getElementById('addModal');
         const detailModal = document.getElementById('detailModal');
-        const readerModal = document.getElementById('readerModal');
 
         document.getElementById('openAddModalBtn').addEventListener('click', () => {
             document.getElementById('gratitudeText').value = '';
@@ -745,7 +738,6 @@
             addModal.classList.remove('active');
         });
 
-        // Color picker selection
         document.querySelectorAll('.color-dot').forEach(dot => {
             dot.addEventListener('click', () => {
                 document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
@@ -754,7 +746,6 @@
             });
         });
 
-        // Save new gratitude sphere
         document.getElementById('saveGratitudeBtn').addEventListener('click', () => {
             const text = document.getElementById('gratitudeText').value.trim();
             if (!text) return;
@@ -772,7 +763,6 @@
             addModal.classList.remove('active');
         });
 
-        // Detail Modal
         function openDetailModal(index) {
             activeSphereIndex = index;
             const s = spheres[index];
@@ -794,48 +784,12 @@
             }
         });
 
-        // Sound Toggle
         const soundBtn = document.getElementById('soundToggleBtn');
         soundBtn.addEventListener('click', () => {
             soundEnabled = !soundEnabled;
             soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
         });
 
-        // Reader Modal Content
-        document.getElementById('openStoryBtn').addEventListener('click', () => {
-            document.getElementById('readerTitle').textContent = 'История Элли и Сундук';
-            document.getElementById('readerContent').innerHTML = `
-                <p>На рассвете Элли услышала мягкий звон. В углу комнаты стоял старинный сундук со звёздами и листьями, источающий золотистое свечение.</p>
-                <p>— Этот сундук — для благодарностей. Только те, кто умеют замечать хорошее, могут открывать его, — прошептал нежный голос.</p>
-                <p>Внутри плавали светящиеся шарики. Дотронувшись до каждого, Элли вспоминала мамин плед, объятия друга и теплоту каждого мгновения. С тех пор сундук стал её верным другом.</p>
-            `;
-            readerModal.classList.add('active');
-        });
-
-        document.getElementById('readFullStoryBtn').addEventListener('click', () => {
-            document.getElementById('readerTitle').textContent = 'Сказка об Элли (Полная версия)';
-            document.getElementById('readerContent').innerHTML = `
-                <p>В самых древних сказках говорится, что настоящее волшебство приходит к тем, кто умеет видеть чудеса в обычных днях!</p>
-                <p>Элли открыла крышку сундука и ахнула от восхищения. Внутри кружились светящиеся сферы. Каждый шарик — это искренняя благодарность. Чем больше благодарностей собирала Элли, тем ярче сиял её внутренний свет.</p>
-            `;
-            readerModal.classList.add('active');
-        });
-
-        document.getElementById('openMeditationBtn').addEventListener('click', () => {
-            document.getElementById('readerTitle').textContent = 'Медитация Благодарности';
-            document.getElementById('readerContent').innerHTML = `
-                <p><strong>1. Дыхание Благодарности:</strong> Вдох (4 счёта) — золотистый свет. Задержка (2 счёта) — оседает в сердце. Выдох (6 счётов) — уходит вся тревога.</p>
-                <p><strong>2. Три Вопроса:</strong> За что благодарен прямо сейчас? Что хорошего в доме? Кто рядом приносит радость?</p>
-                <p><strong>3. Вечерний ритуал:</strong> Перед сном всегда кладите 3 новых шарика в сундук.</p>
-            `;
-            readerModal.classList.add('active');
-        });
-
-        document.getElementById('closeReaderModal').addEventListener('click', () => {
-            readerModal.classList.remove('active');
-        });
-
-        // Reset Data
         document.getElementById('resetDataBtn').addEventListener('click', () => {
             if (confirm('Вы уверены, что хотите очистить сундук?')) {
                 spheres = [];
