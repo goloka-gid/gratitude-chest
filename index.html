@@ -387,6 +387,22 @@
             flex-direction: column;
             gap: 6px;
         }
+
+        /* Celebration Milestone Modal */
+        .celebration-card {
+            background: linear-gradient(135deg, #231d42, #3a2e65);
+            border: 2px solid var(--gold);
+            text-align: center;
+        }
+        .celebration-emoji {
+            font-size: 3rem;
+            margin-bottom: 5px;
+            animation: bounce 1s infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
     </style>
 </head>
 <body>
@@ -504,6 +520,18 @@
             <div class="modal-buttons">
                 <button class="btn btn-secondary" id="closeDetailModal">Закрыть</button>
                 <button class="btn" id="deleteSphereBtn" style="background: #8b3a3a; color: #fff;">Удалить шарик</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CELEBRATION MILESTONE -->
+    <div class="modal-overlay" id="celebrationModal">
+        <div class="modal-card celebration-card">
+            <div class="celebration-emoji">🎉</div>
+            <div class="modal-title" id="celebrationTitle">Великолепно!</div>
+            <p id="celebrationText" style="font-size: 1.05rem; color: #fff; line-height: 1.5;"></p>
+            <div class="modal-buttons" style="margin-top: 10px;">
+                <button class="btn" id="closeCelebrationBtn" style="width: 100%;">Продолжить сиять ✨</button>
             </div>
         </div>
     </div>
@@ -707,6 +735,7 @@
         // --- MODAL CONTROLS ---
         const addModal = document.getElementById('addModal');
         const detailModal = document.getElementById('detailModal');
+        const celebrationModal = document.getElementById('celebrationModal');
 
         document.getElementById('openAddModalBtn').addEventListener('click', () => {
             document.getElementById('gratitudeText').value = '';
@@ -725,6 +754,36 @@
             });
         });
 
+        // --- CELEBRATION MESSAGES FOR MILESTONES ---
+        const celebrationPhrases = {
+            10: "У вас накопилось уже 10 искренних благодарностей! Вы создали целый запас светлой энергии, так держать! 🌟",
+            20: "Ура! Уже 20 прекрасных шариков в сундуке! Ваша внимательность к хорошему преображает каждый день! 💫",
+            30: "Целых 30 благодарностей! Ваш сундук наполняется настоящим волшебством и теплом. Гордимся вами! ✨",
+            40: "40 шариков света! Вы мастер замечать прекрасное в мелочах. Великолепный результат! 🌸",
+            50: "Юбилейные 50 благодарностей! Сундук сияет ярче солнца. Продолжайте в том же духе! 👑",
+            100: "Ого! 100 благодарностей! Это невероятное достижение и огромный вклад в ваше внутреннее счастье! 💖"
+        };
+
+        function checkMilestone(totalCount) {
+            if (totalCount > 0 && totalCount % 10 === 0) {
+                const titleEl = document.getElementById('celebrationTitle');
+                const textEl = document.getElementById('celebrationText');
+                
+                titleEl.textContent = `Рубеж: ${totalCount} благодарностей!`;
+                if (celebrationPhrases[totalCount]) {
+                    textEl.textContent = celebrationPhrases[totalCount];
+                } else {
+                    textEl.textContent = `В вашем сундуке накопилось уже ${totalCount} светлых моментов! Какая прекрасная привычка, так держать! ✨`;
+                }
+
+                if (tg && tg.HapticFeedback) {
+                    try { tg.HapticFeedback.notificationOccurred('success'); } catch(e){}
+                }
+
+                celebrationModal.classList.add('active');
+            }
+        }
+
         document.getElementById('saveGratitudeBtn').addEventListener('click', () => {
             const text = document.getElementById('gratitudeText').value.trim();
             if (!text) return;
@@ -740,6 +799,13 @@
             initParticles();
             playCrystalChime();
             addModal.classList.remove('active');
+
+            // Проверяем достижение круглого числа
+            checkMilestone(spheres.length);
+        });
+
+        document.getElementById('closeCelebrationBtn').addEventListener('click', () => {
+            celebrationModal.classList.remove('active');
         });
 
         function openDetailModal(index) {
